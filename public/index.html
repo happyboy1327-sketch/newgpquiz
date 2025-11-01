@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>위인 퀴즈</title>
+<style>
+  body {
+    font-family: "Noto Sans KR", sans-serif;
+    text-align: center;
+    background: #f9f9f9;
+    padding: 20px;
+  }
+
+  h1 { background-color:#43f4ee; color: #f2ecec; margin-bottom: 10px; margin-left: 15px auto; margin-right: 15px auto;}
+
+  img#quiz-image {
+    width: 300px;
+    height: 300px;
+    object-fit: contain; /* 🔹 이미지 비율 유지 */
+    border-radius: 8px;
+    background: #e0e0e0;
+    margin-bottom: 15px;
+  }
+
+  input#answer {
+    padding: 8px;
+    font-size: 16px;
+    width: 220px;
+    margin-right: 10px;
+  }
+
+  button { padding: 8px 12px; font-size: 16px; cursor: pointer; }
+
+  #timer { font-weight:bold; color:red; margin-bottom:10px; }
+  #hint { font-style: italic; color: #555; margin-bottom:15px; }
+  #result { font-weight:bold; margin-top:10px; }
+  #score { margin-top:10px; color: #333; }
+</style>
+</head>
+<body>
+<h1>위인 퀴즈</h1>
+
+<p id="timer"></p>
+<p id="hint"></p>
+
+<img id="quiz-image" src="" alt="위인 사진" />
+
+<div>
+  <input id="answer" placeholder="이 사람은 누구일까요?" />
+  <button onclick="checkAnswer()">정답 확인</button>
+</div>
+
+<p id="result"></p>
+<p id="score"></p>
+
+<script>
+let correctName = "";
+let score = 0;
+let timer;
+let timeLeft = 12;
+let questionCount = 0;
+const totalQuestions = 6; // 🔹 한 세트 6문제
+
+async function loadQuiz() {
+  if (questionCount >= totalQuestions) {
+    document.body.innerHTML = `<h2>게임 종료! 점수: ${score}/${totalQuestions}</h2>`;
+    return;
+  }
+
+  const res = await fetch("/api/quiz");
+  const data = await res.json();
+
+  correctName = data.name;
+  document.getElementById("quiz-image").src = data.imageUrl;
+  document.getElementById("hint").textContent = `힌트: ${data.hint}`;
+  document.getElementById("result").textContent = "";
+  document.getElementById("answer").value = "";
+
+  timeLeft = 12;
+  startTimer();
+  questionCount++;
+}
+
+function startTimer() {
+  clearInterval(timer);
+  timer = setInterval(() => {
+    document.getElementById("timer").textContent = `남은 시간: ${timeLeft}초`;
+    timeLeft--;
+    if (timeLeft < 0) {
+      clearInterval(timer);
+      document.getElementById("result").textContent = `시간 초과! 정답: ${correctName}`;
+      setTimeout(loadQuiz, 2000);
+    }
+  }, 1000);
+}
+
+function checkAnswer() {
+  clearInterval(timer);
+  const answer = document.getElementById("answer").value.trim();
+  if (answer === correctName) {
+    score++;
+    document.getElementById("result").textContent = "정답!";
+  } else {
+    document.getElementById("result").textContent = `틀렸습니다! 정답: ${correctName}`;
+  }
+  document.getElementById("score").textContent = `점수: ${score}`;
+  setTimeout(loadQuiz, 2000);
+}
+
+loadQuiz();
+</script>
+</body>
+</html>
