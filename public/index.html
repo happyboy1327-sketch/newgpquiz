@@ -10,27 +10,17 @@
     background: #f9f9f9;
     padding: 20px;
   }
-
   h1 { background-color:#43f4ee; color: #f2ecec; margin-bottom: 10px; margin-left: 15px auto; margin-right: 15px auto;}
-
   img#quiz-image {
     width: 300px;
     height: 300px;
-    object-fit: contain; /* 🔹 이미지 비율 유지 */
+    object-fit: contain;
     border-radius: 8px;
     background: #e0e0e0;
     margin-bottom: 15px;
   }
-
-  input#answer {
-    padding: 8px;
-    font-size: 16px;
-    width: 220px;
-    margin-right: 10px;
-  }
-
+  input#answer { padding: 8px; font-size: 16px; width: 220px; margin-right: 10px; }
   button { padding: 8px 12px; font-size: 16px; cursor: pointer; }
-
   #timer { font-weight:bold; color:red; margin-bottom:10px; }
   #hint { font-style: italic; color: #555; margin-bottom:15px; }
   #result { font-weight:bold; margin-top:10px; }
@@ -48,6 +38,7 @@
 <div>
   <input id="answer" placeholder="이 사람은 누구일까요?" />
   <button onclick="checkAnswer()">정답 확인</button>
+  <button onclick="resetQuiz()">다시 풀기</button>
 </div>
 
 <p id="result"></p>
@@ -59,11 +50,12 @@ let score = 0;
 let timer;
 let timeLeft = 12;
 let questionCount = 0;
-const totalQuestions = 6; // 🔹 한 세트 6문제
+const totalQuestions = 6;
 
 async function loadQuiz() {
   if (questionCount >= totalQuestions) {
-    document.body.innerHTML = `<h2>게임 종료! 점수: ${score}/${totalQuestions}</h2>`;
+    document.body.innerHTML = `<h2>게임 종료! 점수: ${score}/${totalQuestions}</h2>
+                               <button onclick="resetQuiz()">다시 시작</button>`;
     return;
   }
 
@@ -107,10 +99,11 @@ function checkAnswer() {
   setTimeout(loadQuiz, 2000);
 }
 
-function restartQuiz() {
+// 🔹 새 게임 시작 버튼
+function resetQuiz() {
   score = 0;
   questionCount = 0;
-  document.getElementById("score").textContent = "";
+  document.getElementById("score").textContent = `점수: ${score}`;
   loadQuiz();
 }
 
