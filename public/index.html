@@ -37,8 +37,8 @@
 
 <div>
   <input id="answer" placeholder="이 사람은 누구일까요?" />
-  <button onclick="checkAnswer()">정답 확인</button>
-  <button onclick="resetQuiz()">다시 풀기</button>
+  <button id="checkBtn" onclick="checkAnswer()">정답 확인</button>
+  <button id="resetBtn" onclick="resetQuiz()" style="display:none;">다시 시작</button>
 </div>
 
 <p id="result"></p>
@@ -54,8 +54,10 @@ const totalQuestions = 6;
 
 async function loadQuiz() {
   if (questionCount >= totalQuestions) {
-    document.body.innerHTML = `<h2>게임 종료! 점수: ${score}/${totalQuestions}</h2>
-                               <button onclick="resetQuiz()">다시 시작</button>`;
+    document.getElementById("result").textContent = `게임 종료! 점수: ${score}/${totalQuestions}`;
+    document.getElementById("answer").style.display = "none";
+    document.getElementById("checkBtn").style.display = "none";
+    document.getElementById("resetBtn").style.display = "inline-block";
     return;
   }
 
@@ -99,11 +101,14 @@ function checkAnswer() {
   setTimeout(loadQuiz, 2000);
 }
 
-// 🔹 새 게임 시작 버튼
 function resetQuiz() {
   score = 0;
   questionCount = 0;
   document.getElementById("score").textContent = `점수: ${score}`;
+  document.getElementById("result").textContent = "";
+  document.getElementById("answer").style.display = "inline-block";
+  document.getElementById("checkBtn").style.display = "inline-block";
+  document.getElementById("resetBtn").style.display = "none";
   loadQuiz();
 }
 
@@ -111,3 +116,4 @@ loadQuiz();
 </script>
 </body>
 </html>
+
