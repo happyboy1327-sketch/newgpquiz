@@ -107,6 +107,13 @@ function checkAnswer() {
   setTimeout(loadQuiz, 2000);
 }
 
+function restartQuiz() {
+  score = 0;
+  questionCount = 0;
+  document.getElementById("score").textContent = "";
+  loadQuiz();
+}
+
 loadQuiz();
 </script>
 </body>
